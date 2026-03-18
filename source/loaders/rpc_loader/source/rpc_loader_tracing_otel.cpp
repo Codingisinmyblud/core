@@ -20,7 +20,7 @@
 
 /* OpenTelemetry-backed tracing implementation.
  * Compiled when OPTION_RPC_TRACING is ON.
- * Uses OStreamSpanExporter (console) for v1 — no external collector needed. */
+ * Uses OStreamSpanExporter (console) for v1 */
 
 #include <rpc_loader/rpc_loader_tracing.h>
 
@@ -41,7 +41,6 @@ namespace trace_exp = opentelemetry::exporter::trace;
 
 static const char *TRACER_NAME = "metacall.rpc_loader";
 
-/* Get or create the tracer instance */
 static opentelemetry::nostd::shared_ptr<trace_api::Tracer> get_tracer()
 {
 	return trace_api::Provider::GetTracerProvider()->GetTracer(TRACER_NAME, "0.1.0");
@@ -89,26 +88,21 @@ rpc_trace_scope::~rpc_trace_scope()
 
 void rpc_tracing_initialize(void)
 {
-	/* Create ostream exporter (writes spans to stdout) */
 	auto exporter = trace_exp::OStreamSpanExporterFactory::Create();
 
-	/* Create simple span processor (exports spans one at a time, synchronously) */
 	auto processor = trace_sdk::SimpleSpanProcessorFactory::Create(std::move(exporter));
 
-	/* Create tracer provider and register it globally */
 	std::vector<std::unique_ptr<trace_sdk::SpanProcessor>> processors;
 	processors.push_back(std::move(processor));
 
 	auto provider = trace_sdk::TracerProviderFactory::Create(std::move(processors));
 
-	/* Convert unique_ptr to shared_ptr as required by the OTel API */
 	std::shared_ptr<trace_api::TracerProvider> shared_provider(std::move(provider));
 	trace_api::Provider::SetTracerProvider(shared_provider);
 }
 
 void rpc_tracing_shutdown(void)
 {
-	/* Reset to the default no-op provider, which flushes and cleans up */
 	auto noop = opentelemetry::nostd::shared_ptr<trace_api::TracerProvider>(new trace_api::NoopTracerProvider());
 	trace_api::Provider::SetTracerProvider(noop);
 }

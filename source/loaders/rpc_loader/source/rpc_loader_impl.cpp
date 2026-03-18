@@ -422,9 +422,8 @@ function_return function_rpc_interface_await(function func, function_impl impl, 
 	/* Wake poll thread from curl_multi_poll (thread-safe) */
 	curl_multi_wakeup(rpc_impl->async_multi);
 
-	/* Trace span ends here — covers serialization + enqueue (dispatch only).
-	 * Full end-to-end async span propagation is future work. */
-
+	//Trace span ends here
+	
 	/* TODO: Implement future return? */
 	return NULL;
 }
@@ -603,7 +602,7 @@ loader_impl_data rpc_loader_impl_initialize(loader_impl impl, configuration conf
 		return NULL;
 	}
 
-	/* Initialize tracing subsystem (no-op when OPTION_RPC_TRACING is OFF) */
+	// Initialize tracing subsystem (no-op when OPTION_RPC_TRACING is OFF)
 	rpc_tracing_initialize();
 
 	/* Register initialization */
@@ -918,7 +917,7 @@ int rpc_loader_impl_destroy(loader_impl impl)
 {
 	loader_impl_rpc rpc_impl = static_cast<loader_impl_rpc>(loader_impl_get(impl));
 
-	/* Shutdown tracing subsystem (no-op when OPTION_RPC_TRACING is OFF) */
+	// Shutdown tracing subsystem (no-op when OPTION_RPC_TRACING is OFF)
 	rpc_tracing_shutdown();
 
 	/* Destroy children loaders */

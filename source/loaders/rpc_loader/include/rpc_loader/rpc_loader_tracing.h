@@ -27,25 +27,16 @@
  *
  * When OPTION_RPC_TRACING is enabled, this emits OpenTelemetry spans.
  * When disabled, all methods are compiled as no-ops (zero overhead).
- *
- * Usage:
- *   {
- *       rpc_trace_scope trace("my_function", "http://host/call/my_function", false);
- *       // ... perform the RPC call ...
- *       if (error) trace.set_error("something went wrong");
- *   } // span ends here
  */
 class rpc_trace_scope
 {
 public:
 	rpc_trace_scope(const char *function_name, const char *target_url, bool is_async);
 
-	/* Mark the current span as errored before it ends */
 	void set_error(const char *error_message);
 
 	~rpc_trace_scope();
 
-	/* Non-copyable, non-movable */
 	rpc_trace_scope(const rpc_trace_scope &) = delete;
 	rpc_trace_scope &operator=(const rpc_trace_scope &) = delete;
 

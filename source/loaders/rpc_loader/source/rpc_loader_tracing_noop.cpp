@@ -20,7 +20,7 @@
 
 /* No-op tracing implementation.
  * Compiled when OPTION_RPC_TRACING is OFF (the default).
- * All methods are empty — zero runtime overhead. */
+ * All methods are empty so that would mean zero runtime overhead. */
 
 #include <rpc_loader/rpc_loader_tracing.h>
 
